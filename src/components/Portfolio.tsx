@@ -403,7 +403,7 @@ const Portfolio = () => {
 
                     {/* Nom et Titre */}
                     <h3 className="text-3xl font-bold text-white mb-1">Nina <span className="text-orange-500">.Dev</span></h3>
-                    <p className="text-slate-300 text-sm font-medium mb-4">Full-Stack Developer & UI Enthusiast</p>
+                    <p className="text-slate-300 text-sm font-medium mb-4">Full-Stack Developer</p>
                     
                     {/* Stats / Tech rapides */}
                     <div className="flex gap-3 pt-4 border-t border-white/10">
