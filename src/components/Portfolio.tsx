@@ -310,7 +310,7 @@ const Portfolio = () => {
       </div>
 
       {/* HERO SECTION */}
-      <section id="home" className="min-h-screen flex items-center pt-24 pb-12 relative overflow-hidden">
+      <section id="home" className="min-h-screen flex items-center pt-20 pb-10 relative overflow-hidden">
         <div className="absolute inset-0 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:24px_24px] pointer-events-none"></div>
         <div className="absolute inset-0 bg-gradient-to-b from-transparent via-[#1a0b2e]/50 to-[#1a0b2e] pointer-events-none"></div>
         
@@ -355,7 +355,7 @@ const Portfolio = () => {
       </section>
 
       {/* SECTION À PROPOS (NOUVELLE VERSION PREMIUM) */}
-      <section id="about" className="py-32 bg-[#150925] relative overflow-hidden">
+      <section id="about" className="py-20 bg-[#150925] relative overflow-hidden">
         {/* Arrière-plan décoratif global */}
         <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-orange-600/5 rounded-full blur-[120px] pointer-events-none translate-x-1/3 -translate-y-1/3"></div>
         <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-purple-600/5 rounded-full blur-[100px] pointer-events-none -translate-x-1/3 translate-y-1/3"></div>
@@ -471,7 +471,7 @@ const Portfolio = () => {
       </section>
 
       {/* SKILLS SECTION */}
-      <section id="skills" className="py-32 relative overflow-hidden">
+      <section id="skills" className="py-20 relative overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-b from-[#150925] via-[#1a0b2e] to-[#150925] pointer-events-none"></div>
         <div className="max-w-7xl mx-auto px-6 relative z-10">
           <SectionTitle>Compétences Techniques</SectionTitle>
@@ -506,7 +506,7 @@ const Portfolio = () => {
       </section>
 
       {/* PROJECTS SECTION */}
-      <section id="projects" className="py-24 bg-[#150925] overflow-hidden">
+      <section id="projects" className="py-16 bg-[#150925] overflow-hidden">
         <div className="max-w-7xl mx-auto px-6">
           <div className="mb-12 flex justify-between items-end">
             <SectionTitle>Réalisations</SectionTitle>
@@ -584,7 +584,7 @@ const Portfolio = () => {
       </section>
 
       {/* EXPERIENCE SECTION */}
-      <section id="experience" className="py-24 relative">
+      <section id="experience" className="py-16 relative">
         <div className="max-w-7xl mx-auto px-6">
           <SectionTitle>Parcours Professionnel</SectionTitle>
           <div className="space-y-8 max-w-4xl mx-auto">
@@ -620,7 +620,7 @@ const Portfolio = () => {
       </section>
 
       {/* SECTION CONTACT */}
-      <section id="contact" className="py-32 bg-[#150925] relative overflow-hidden">
+      <section id="contact" className="py-20 bg-[#150925] relative overflow-hidden">
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-purple-900/20 via-[#150925] to-[#150925] pointer-events-none"></div>
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-orange-600/5 rounded-full blur-[100px] pointer-events-none"></div>
 
