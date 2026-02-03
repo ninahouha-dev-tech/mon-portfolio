@@ -261,8 +261,8 @@ const Portfolio = () => {
         <header 
           className={`
             pointer-events-auto w-full md:max-w-6xl transition-all duration-300
-            ${scrolled || isMenuOpen ? 'bg-[#1a0b2e]/90 border-b md:border border-white/10 shadow-2xl backdrop-blur-xl' : 'bg-transparent border-transparent'}
-            ${isMenuOpen ? 'rounded-none h-screen md:h-auto' : 'md:rounded-2xl'}
+            ${scrolled || isMenuOpen ? 'bg-[#1a0b2e]/95 border-b md:border border-white/10 shadow-2xl backdrop-blur-xl' : 'bg-transparent border-transparent'}
+            ${isMenuOpen ? 'rounded-none h-screen' : 'md:rounded-2xl max-w-[95%] md:max-w-6xl'}
           `}
         >
           <div className="px-6 h-20 flex justify-between items-center">
@@ -298,10 +298,10 @@ const Portfolio = () => {
           </div>
 
           {isMenuOpen && (
-            <div className="md:hidden absolute top-20 left-0 w-full h-[calc(100vh-80px)] bg-[#1a0b2e] p-6 flex flex-col gap-4 overflow-y-auto">
+            <div className="md:hidden absolute top-20 left-0 w-full h-[calc(100vh-80px)] bg-[#1a0b2e] p-6 flex flex-col gap-2 overflow-y-auto">
               {['home', 'about', 'skills', 'projects', 'experience', 'contact'].map((id) => (
-                <button key={id} onClick={() => scrollTo(id)} className="text-left p-4 rounded-xl text-xl font-medium text-slate-300 hover:bg-white/5 hover:text-orange-500 transition-colors border-b border-white/5 last:border-0">
-                  {id === 'home' ? 'Accueil' : id.charAt(0).toUpperCase() + id.slice(1)}
+                <button key={id} onClick={() => scrollTo(id)} className="text-left p-4 rounded-xl text-lg font-medium text-slate-300 hover:bg-white/5 hover:text-orange-500 transition-colors border-b border-white/5 last:border-0 capitalize">
+                  {id === 'home' ? 'Accueil' : id === 'about' ? 'À propos' : id === 'skills' ? 'Compétences' : id === 'projects' ? 'Projets' : id === 'experience' ? 'Expérience' : 'Contact'}
                 </button>
               ))}
             </div>
@@ -326,8 +326,8 @@ const Portfolio = () => {
             
             <div className="space-y-4">
               <h2 className="text-lg md:text-xl text-orange-500 font-medium tracking-wide">Bonjour, je suis Nina</h2>
-              <h1 className="text-5xl lg:text-7xl font-bold text-white leading-[1.1]">
-                <span className="block">{typingText}</span>
+              <h1 className="text-4xl xs:text-5xl lg:text-7xl font-bold text-white leading-[1.1]">
+                <span className="block min-h-[1.2em]">{typingText}</span>
                 <span className="text-transparent bg-clip-text bg-gradient-to-r from-slate-200 to-slate-500">Passionnée</span>
               </h1>
             </div>
@@ -342,10 +342,10 @@ const Portfolio = () => {
             </div>
           </div>
           
-          <div className="flex justify-center relative order-1 md:order-2 mb-8 md:mb-0">
-            <div className="relative w-72 h-80 md:w-96 md:h-[450px] group">
-              <div className="absolute inset-0 bg-gradient-to-tr from-orange-500 to-transparent opacity-20 rounded-[2rem] transform rotate-6 border border-orange-500/30 transition-transform group-hover:rotate-12 duration-700 ease-out"></div>
-              <div className="absolute inset-0 bg-[#0f0518] rounded-[2rem] transform -rotate-3 border border-white/5 shadow-2xl transition-transform group-hover:-rotate-6 duration-700 ease-out"></div>
+          <div className="flex justify-center relative order-1 md:order-2 mb-12 md:mb-0">
+            <div className="relative w-64 h-72 xs:w-72 xs:h-80 md:w-80 md:h-[400px] lg:w-96 lg:h-[450px] group">
+              <div className="absolute inset-0 bg-gradient-to-tr from-orange-500 to-transparent opacity-20 rounded-[2rem] transform rotate-3 md:rotate-6 border border-orange-500/30 transition-transform group-hover:rotate-12 duration-700 ease-out"></div>
+              <div className="absolute inset-0 bg-[#0f0518] rounded-[2rem] transform -rotate-2 md:-rotate-3 border border-white/5 shadow-2xl transition-transform group-hover:-rotate-6 duration-700 ease-out"></div>
               <div className="absolute inset-2 bg-slate-800 rounded-[1.5rem] overflow-hidden shadow-[0_0_40px_rgba(0,0,0,0.5)] border border-white/10 z-10">
                 <img src="/images/1.jpg" alt="Nina" className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
               </div>
@@ -371,7 +371,7 @@ const Portfolio = () => {
                 <div className="absolute -inset-1 bg-gradient-to-r from-orange-500 to-purple-600 rounded-3xl blur opacity-25 group-hover:opacity-50 transition duration-1000 group-hover:duration-200"></div>
                 
                 {/* 2. Conteneur principal de la carte */}
-                <div className="relative h-[480px] w-full bg-[#1a0b2e] rounded-[1.5rem] overflow-hidden border border-white/10 shadow-2xl">
+                <div className="relative h-[400px] xs:h-[480px] w-full bg-[#1a0b2e] rounded-[1.5rem] overflow-hidden border border-white/10 shadow-2xl">
                   
                   {/* Image */}
                   <div className="absolute inset-0">
@@ -489,7 +489,7 @@ const Portfolio = () => {
                   </div>
                   
                   <h3 className="text-xl font-bold text-white mb-2">{category.title}</h3>
-                  <p className="text-slate-400 text-sm mb-6 h-10">{category.description}</p>
+                  <p className="text-slate-400 text-sm mb-6 min-h-[2.5rem]">{category.description}</p>
                   
                   <div className="flex flex-wrap gap-2">
                     {category.skills.map((skill, sIdx) => (
@@ -521,7 +521,7 @@ const Portfolio = () => {
             <div className="flex overflow-x-auto gap-6 pb-8 snap-x snap-mandatory scrollbar-hide -mx-6 px-6 md:mx-0 md:px-0">
               
               {PROJECTS.map((project) => (
-                <div key={project.id} className="snap-center shrink-0 w-[85vw] md:w-[400px] bg-[#1e1136] border border-white/5 rounded-2xl overflow-hidden hover:border-orange-500/50 hover:shadow-2xl hover:shadow-orange-500/10 transition-all duration-300 flex flex-col group">
+                <div key={project.id} className="snap-center shrink-0 w-[85vw] sm:w-[350px] md:w-[400px] bg-[#1e1136] border border-white/5 rounded-2xl overflow-hidden hover:border-orange-500/50 hover:shadow-2xl hover:shadow-orange-500/10 transition-all duration-300 flex flex-col group">
                   
                   <div className="relative h-48 md:h-56 bg-slate-800 overflow-hidden">
                     <img 
@@ -561,7 +561,7 @@ const Portfolio = () => {
                 </div>
               ))}
 
-              <div className="snap-center shrink-0 w-[85vw] md:w-[300px] flex items-center justify-center">
+              <div className="snap-center shrink-0 w-[85vw] sm:w-[300px] flex items-center justify-center">
                  <a 
                    href="https://github.com/ninahouha-dev-tech" 
                    target="_blank" 
@@ -633,11 +633,11 @@ const Portfolio = () => {
             <div className="relative bg-[#0f0518] rounded-[1.8rem] overflow-hidden border border-white/10 shadow-2xl">
               
               <div className="grid grid-cols-1 md:grid-cols-2 divide-y md:divide-y-0 md:divide-x divide-white/5 bg-[#1e1136]/50">
-                <a href="mailto:houhatatiana@gmail.com" className="flex items-center justify-center gap-3 p-6 hover:bg-white/5 transition-colors group">
-                  <div className="p-2 bg-orange-500/10 rounded-lg text-orange-500 group-hover:scale-110 transition-transform">
+                <a href="mailto:houhatatiana@gmail.com" className="flex items-center justify-center gap-3 p-6 hover:bg-white/5 transition-colors group text-center break-all">
+                  <div className="p-2 bg-orange-500/10 rounded-lg text-orange-500 group-hover:scale-110 transition-transform shrink-0">
                     <Mail size={20} />
                   </div>
-                  <span className="text-slate-300 font-medium group-hover:text-white transition-colors">houhatatiana@gmail.com</span>
+                  <span className="text-slate-300 font-medium group-hover:text-white transition-colors text-sm sm:text-base">houhatatiana@gmail.com</span>
                 </a>
                 <a href="tel:+1234567890" className="flex items-center justify-center gap-3 p-6 hover:bg-white/5 transition-colors group">
                   <div className="p-2 bg-purple-500/10 rounded-lg text-purple-500 group-hover:scale-110 transition-transform">
@@ -728,7 +728,7 @@ const Portfolio = () => {
       {/* FOOTER */}
       <footer className="bg-[#0f0518] py-8 border-t border-white/5">
         <div className="max-w-7xl mx-auto px-6 flex flex-col md:flex-row justify-between items-center gap-4">
-          <div className="text-slate-500 text-sm">© {new Date().getFullYear()} Nina HOUHA. Code with <span className="text-orange-500">React</span> & <span className="text-orange-500">Tailwind</span>.</div>
+          <div className="text-slate-500 text-sm text-center md:text-left">© {new Date().getFullYear()} Nina HOUHA. Code with <span className="text-orange-500">React</span> & <span className="text-orange-500">Tailwind</span>.</div>
           <div className="flex items-center gap-6">
             <a href="#" className="text-slate-500 hover:text-white transition-colors"><MessageCircle size={20} /></a>
             <a href="#" className="text-slate-500 hover:text-blue-600 transition-colors"><Facebook size={20} /></a>
