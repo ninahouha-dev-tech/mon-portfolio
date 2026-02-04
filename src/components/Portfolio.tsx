@@ -200,11 +200,11 @@ const DYNAMIC_FORM_DATA = {
     }
   ],
   budgetRanges: [
-    { id: "v_small", label: "Moins de 500 €" },
-    { id: "small", label: "500 € - 1 500 €" },
-    { id: "medium", label: "1 500 € - 5 000 €" },
-    { id: "large", label: "5 000 € - 10 000 €" },
-    { id: "v_large", label: "Plus de 10 000 €" }
+    { id: "v_small", label: "Moins de 250 000 FCFA" },
+    { id: "small", label: "250 000 FCFA - 750 000 FCFA" },
+    { id: "medium", label: "750 000 FCFA - 2 000 000 FCFA" },
+    { id: "large", label: "2 000 000 FCFA - 5 000 000 FCFA" },
+    { id: "v_large", label: "Plus de 5 000 000 FCFA" }
   ]
 };
 
