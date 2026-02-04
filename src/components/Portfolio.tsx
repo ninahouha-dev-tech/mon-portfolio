@@ -198,6 +198,13 @@ const DYNAMIC_FORM_DATA = {
         }
       ]
     }
+  ],
+  budgetRanges: [
+    { id: "v_small", label: "Moins de 500 €" },
+    { id: "small", label: "500 € - 1 500 €" },
+    { id: "medium", label: "1 500 € - 5 000 €" },
+    { id: "large", label: "5 000 € - 10 000 €" },
+    { id: "v_large", label: "Plus de 10 000 €" }
   ]
 };
 
@@ -253,7 +260,8 @@ const Portfolio = () => {
     location: '', 
     projectType: '', 
     category: '', 
-    technology: '' 
+    technology: '',
+    budget: ''
   });
   const [status, setStatus] = useState<'idle' | 'sending' | 'success' | 'error'>('idle');
 
@@ -261,11 +269,12 @@ const Portfolio = () => {
     { id: 'personal', fields: ['name', 'location', 'email'] },
     { id: 'type', fields: ['projectType'] },
     { id: 'category', fields: ['category'] },
-    { id: 'technology', fields: ['technology'] }
+    { id: 'technology', fields: ['technology'] },
+    { id: 'budget', fields: ['budget'] }
   ], []);
 
   const progress = useMemo(() => {
-    const totalFields = 6;
+    const totalFields = 7;
     const filledFields = Object.values(formState).filter(val => val !== '').length;
     return Math.round((filledFields / totalFields) * 100);
   }, [formState]);
@@ -275,6 +284,7 @@ const Portfolio = () => {
     if (stepId === 'type') return formState.name && formState.location && formState.email;
     if (stepId === 'category') return formState.projectType;
     if (stepId === 'technology') return formState.category;
+    if (stepId === 'budget') return formState.technology;
     return false;
   };
 
@@ -288,8 +298,12 @@ const Portfolio = () => {
       if (field === 'projectType') {
         newState.category = '';
         newState.technology = '';
+        newState.budget = '';
       } else if (field === 'category') {
         newState.technology = '';
+        newState.budget = '';
+      } else if (field === 'technology') {
+        newState.budget = '';
       }
       
       return newState;
@@ -348,14 +362,15 @@ const Portfolio = () => {
       project_type: formState.projectType,
       category: formState.category,
       technology: formState.technology,
+      budget: formState.budget,
       subject: `Nouveau projet: ${formState.projectType}`,
-      message: `Nom: ${formState.name}\nEmail: ${formState.email}\nLieu: ${formState.location}\nType: ${formState.projectType}\nCatégorie: ${formState.category}\nTechno: ${formState.technology}`,
+      message: `Nom: ${formState.name}\nEmail: ${formState.email}\nLieu: ${formState.location}\nType: ${formState.projectType}\nCatégorie: ${formState.category}\nTechno: ${formState.technology}\nBudget: ${formState.budget}`,
     };
 
     emailjs.send(serviceID, templateID, templateParams, publicKey)
       .then((response: EmailJSResponseStatus) => {
         setStatus('success');
-        setFormState({ name: '', email: '', location: '', projectType: '', category: '', technology: '' });
+        setFormState({ name: '', email: '', location: '', projectType: '', category: '', technology: '', budget: '' });
         setTimeout(() => setStatus('idle'), 5000);
       })
       .catch((err: Error) => {
@@ -914,6 +929,31 @@ const Portfolio = () => {
                         </motion.div>
                       )}
                     </AnimatePresence>
+
+                    <AnimatePresence>
+                      {canShowStep('budget') && (
+                        <motion.div 
+                          className="group relative"
+                          initial={{ opacity: 0, y: 20 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          exit={{ opacity: 0, y: -20 }}
+                        >
+                          <select 
+                            required
+                            className="w-full bg-transparent border-b-2 border-white/10 py-3 text-white focus:outline-none focus:border-orange-500 transition-all appearance-none cursor-pointer"
+                            id="budget"
+                            value={formState.budget}
+                            onChange={e => handleFieldChange('budget', e.target.value)}
+                          >
+                            <option value="" disabled hidden className="bg-[#0f0518]">Fourchette de Budget</option>
+                            {DYNAMIC_FORM_DATA.budgetRanges.map(range => (
+                              <option key={range.id} value={range.label} className="bg-[#0f0518]">{range.label}</option>
+                            ))}
+                          </select>
+                          <label htmlFor="budget" className={`absolute left-0 -top-5 text-xs ${formState.budget ? 'text-orange-500' : 'text-slate-500'} transition-all`}>Budget prévu</label>
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
                   </div>
 
                   {/* CONCLUSION & SUBMIT */}
@@ -938,6 +978,10 @@ const Portfolio = () => {
                             <div>
                               <p className="text-slate-500 mb-1">Spécification</p>
                               <p className="text-white font-medium">{formState.technology} ({formState.category})</p>
+                            </div>
+                            <div>
+                              <p className="text-slate-500 mb-1">Budget</p>
+                              <p className="text-white font-medium">{formState.budget}</p>
                             </div>
                           </div>
                         </div>
