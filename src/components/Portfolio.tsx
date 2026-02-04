@@ -121,6 +121,38 @@ const SKILLS_CATEGORIES = [
   }
 ];
 
+const DYNAMIC_FORM_DATA = {
+  projectTypes: [
+    {
+      id: "web",
+      label: "Site Web",
+      categories: [
+        {
+          id: "vitrine",
+          label: "Site Vitrine",
+          techs: ["React", "HTML/CSS", "Next.js"]
+        },
+        {
+          id: "ecommerce",
+          label: "E-commerce",
+          techs: ["Shopify", "React", "Node.js"]
+        }
+      ]
+    },
+    {
+      id: "mobile",
+      label: "Application Mobile",
+      categories: [
+        {
+          id: "ios_android",
+          label: "iOS & Android",
+          techs: ["React Native", "Flutter"]
+        }
+      ]
+    }
+  ]
+};
+
 // --- COMPONENTS ---
 
 const SectionTitle = ({ children }: { children: React.ReactNode }) => (
@@ -167,8 +199,31 @@ const Portfolio = () => {
   const [typingText, setTypingText] = useState('');
   const [scrolled, setScrolled] = useState(false);
   
-  const [formState, setFormState] = useState({ name: '', email: '', subject: '', message: '' });
+  const [formState, setFormState] = useState({ 
+    name: '', 
+    email: '', 
+    location: '', 
+    projectType: '', 
+    category: '', 
+    technology: '' 
+  });
   const [status, setStatus] = useState<'idle' | 'sending' | 'success' | 'error'>('idle');
+  
+  const handleFieldChange = (field: string, value: string) => {
+    setFormState(prev => {
+      const newState = { ...prev, [field]: value };
+      
+      // Reset dependent fields
+      if (field === 'projectType') {
+        newState.category = '';
+        newState.technology = '';
+      } else if (field === 'category') {
+        newState.technology = '';
+      }
+      
+      return newState;
+    });
+  };
   
   const fullText = "Développeuse Full-Stack";
   useEffect(() => {
@@ -218,14 +273,18 @@ const Portfolio = () => {
     const templateParams = {
       from_name: formState.name,
       from_email: formState.email,
-      subject: formState.subject || "Contact Portfolio",
-      message: formState.message,
+      location: formState.location,
+      project_type: formState.projectType,
+      category: formState.category,
+      technology: formState.technology,
+      subject: `Nouveau projet: ${formState.projectType}`,
+      message: `Nom: ${formState.name}\nEmail: ${formState.email}\nLieu: ${formState.location}\nType: ${formState.projectType}\nCatégorie: ${formState.category}\nTechno: ${formState.technology}`,
     };
 
     emailjs.send(serviceID, templateID, templateParams, publicKey)
       .then((response: EmailJSResponseStatus) => {
         setStatus('success');
-        setFormState({ name: '', email: '', subject: '', message: '' });
+        setFormState({ name: '', email: '', location: '', projectType: '', category: '', technology: '' });
         setTimeout(() => setStatus('idle'), 5000);
       })
       .catch((err: Error) => {
@@ -655,14 +714,29 @@ const Portfolio = () => {
                         type="text" 
                         required
                         className="w-full bg-transparent border-b-2 border-white/10 py-3 text-white focus:outline-none focus:border-orange-500 transition-all placeholder-transparent peer"
-                        placeholder="Nom complet"
+                        placeholder="Nom / Raison sociale"
                         id="name"
                         value={formState.name}
-                        onChange={e => setFormState({...formState, name: e.target.value})}
+                        onChange={e => handleFieldChange('name', e.target.value)}
                       />
-                      <label htmlFor="name" className="absolute left-0 top-3 text-slate-500 text-sm transition-all peer-placeholder-shown:text-base peer-placeholder-shown:top-3 peer-focus:-top-5 peer-focus:text-xs peer-focus:text-orange-500 peer-valid:-top-5 peer-valid:text-xs">Nom complet</label>
+                      <label htmlFor="name" className="absolute left-0 top-3 text-slate-500 text-sm transition-all peer-placeholder-shown:text-base peer-placeholder-shown:top-3 peer-focus:-top-5 peer-focus:text-xs peer-focus:text-orange-500 peer-valid:-top-5 peer-valid:text-xs">Nom / Raison sociale</label>
                     </div>
 
+                    <div className="group relative">
+                      <input 
+                        type="text" 
+                        required
+                        className="w-full bg-transparent border-b-2 border-white/10 py-3 text-white focus:outline-none focus:border-orange-500 transition-all placeholder-transparent peer"
+                        placeholder="Lieu de résidence"
+                        id="location"
+                        value={formState.location}
+                        onChange={e => handleFieldChange('location', e.target.value)}
+                      />
+                      <label htmlFor="location" className="absolute left-0 top-3 text-slate-500 text-sm transition-all peer-placeholder-shown:text-base peer-placeholder-shown:top-3 peer-focus:-top-5 peer-focus:text-xs peer-focus:text-orange-500 peer-valid:-top-5 peer-valid:text-xs">Lieu de résidence / Siège</label>
+                    </div>
+                  </div>
+
+                  <div className="grid md:grid-cols-2 gap-8">
                     <div className="group relative">
                       <input 
                         type="email" 
@@ -671,42 +745,69 @@ const Portfolio = () => {
                         placeholder="Email"
                         id="email"
                         value={formState.email}
-                        onChange={e => setFormState({...formState, email: e.target.value})}
+                        onChange={e => handleFieldChange('email', e.target.value)}
                       />
-                      <label htmlFor="email" className="absolute left-0 top-3 text-slate-500 text-sm transition-all peer-placeholder-shown:text-base peer-placeholder-shown:top-3 peer-focus:-top-5 peer-focus:text-xs peer-focus:text-orange-500 peer-valid:-top-5 peer-valid:text-xs">Email</label>
+                      <label htmlFor="email" className="absolute left-0 top-3 text-slate-500 text-sm transition-all peer-placeholder-shown:text-base peer-placeholder-shown:top-3 peer-focus:-top-5 peer-focus:text-xs peer-focus:text-orange-500 peer-valid:-top-5 peer-valid:text-xs">Email professionnel</label>
+                    </div>
+
+                    <div className="group relative">
+                      <select 
+                        required
+                        className="w-full bg-transparent border-b-2 border-white/10 py-3 text-white focus:outline-none focus:border-orange-500 transition-all appearance-none cursor-pointer"
+                        id="projectType"
+                        value={formState.projectType}
+                        onChange={e => handleFieldChange('projectType', e.target.value)}
+                      >
+                        <option value="" disabled hidden className="bg-[#0f0518]">Type de projet</option>
+                        {DYNAMIC_FORM_DATA.projectTypes.map(type => (
+                          <option key={type.id} value={type.id} className="bg-[#0f0518]">{type.label}</option>
+                        ))}
+                      </select>
+                      <label htmlFor="projectType" className={`absolute left-0 -top-5 text-xs ${formState.projectType ? 'text-orange-500' : 'text-slate-500'} transition-all`}>Type de projet</label>
                     </div>
                   </div>
 
-                  <div className="group relative">
-                    <input 
-                      type="text" 
-                      className="w-full bg-transparent border-b-2 border-white/10 py-3 text-white focus:outline-none focus:border-orange-500 transition-all placeholder-transparent peer"
-                      placeholder="Sujet"
-                      id="subject"
-                      value={formState.subject}
-                      onChange={e => setFormState({...formState, subject: e.target.value})}
-                    />
-                    <label htmlFor="subject" className="absolute left-0 top-3 text-slate-500 text-sm transition-all peer-placeholder-shown:text-base peer-placeholder-shown:top-3 peer-focus:-top-5 peer-focus:text-xs peer-focus:text-orange-500 peer-valid:-top-5 peer-valid:text-xs">Sujet (Optionnel)</label>
-                  </div>
+                  <div className="grid md:grid-cols-2 gap-8">
+                    <div className={`group relative transition-all duration-500 ${!formState.projectType ? 'opacity-30 pointer-events-none' : 'opacity-100'}`}>
+                      <select 
+                        required
+                        disabled={!formState.projectType}
+                        className="w-full bg-transparent border-b-2 border-white/10 py-3 text-white focus:outline-none focus:border-orange-500 transition-all appearance-none cursor-pointer"
+                        id="category"
+                        value={formState.category}
+                        onChange={e => handleFieldChange('category', e.target.value)}
+                      >
+                        <option value="" disabled hidden className="bg-[#0f0518]">Catégorie</option>
+                        {DYNAMIC_FORM_DATA.projectTypes.find(t => t.id === formState.projectType)?.categories.map(cat => (
+                          <option key={cat.id} value={cat.id} className="bg-[#0f0518]">{cat.label}</option>
+                        ))}
+                      </select>
+                      <label htmlFor="category" className={`absolute left-0 -top-5 text-xs ${formState.category ? 'text-orange-500' : 'text-slate-500'} transition-all`}>Catégorie</label>
+                    </div>
 
-                  <div className="group relative">
-                    <textarea 
-                      required
-                      rows={4}
-                      className="w-full bg-transparent border-b-2 border-white/10 py-3 text-white focus:outline-none focus:border-orange-500 transition-all placeholder-transparent peer resize-none"
-                      placeholder="Message"
-                      id="message"
-                      value={formState.message}
-                      onChange={e => setFormState({...formState, message: e.target.value})}
-                    ></textarea>
-                    <label htmlFor="message" className="absolute left-0 top-3 text-slate-500 text-sm transition-all peer-placeholder-shown:text-base peer-placeholder-shown:top-3 peer-focus:-top-5 peer-focus:text-xs peer-focus:text-orange-500 peer-valid:-top-5 peer-valid:text-xs">Votre message</label>
+                    <div className={`group relative transition-all duration-500 ${!formState.category ? 'opacity-30 pointer-events-none' : 'opacity-100'}`}>
+                      <select 
+                        required
+                        disabled={!formState.category}
+                        className="w-full bg-transparent border-b-2 border-white/10 py-3 text-white focus:outline-none focus:border-orange-500 transition-all appearance-none cursor-pointer"
+                        id="technology"
+                        value={formState.technology}
+                        onChange={e => handleFieldChange('technology', e.target.value)}
+                      >
+                        <option value="" disabled hidden className="bg-[#0f0518]">Technologie</option>
+                        {DYNAMIC_FORM_DATA.projectTypes.find(t => t.id === formState.projectType)?.categories.find(c => c.id === formState.category)?.techs.map(tech => (
+                          <option key={tech} value={tech} className="bg-[#0f0518]">{tech}</option>
+                        ))}
+                      </select>
+                      <label htmlFor="technology" className={`absolute left-0 -top-5 text-xs ${formState.technology ? 'text-orange-500' : 'text-slate-500'} transition-all`}>Technologie</label>
+                    </div>
                   </div>
 
                   <div className="pt-4 space-y-4">
                     {status === 'success' && (
-                      <div className="p-4 bg-green-500/10 border border-green-500/20 rounded-xl flex items-center gap-3 text-green-400">
+                      <div className="p-4 bg-green-500/10 border border-green-500/20 rounded-xl flex items-center gap-3 text-green-400 animate-in fade-in slide-in-from-bottom-4 duration-500">
                         <CheckCircle size={20} />
-                        <span>Message envoyé avec succès !</span>
+                        <span>Demande envoyée avec succès ! Je reviens vers vous rapidement.</span>
                       </div>
                     )}
                     
@@ -715,7 +816,7 @@ const Portfolio = () => {
                       disabled={status === 'sending' || status === 'success'}
                       className={`w-full font-bold py-4 rounded-xl shadow-lg flex items-center justify-center gap-3 transition-all group ${status === 'sending' ? 'bg-slate-700 cursor-not-allowed' : 'bg-gradient-to-r from-orange-600 to-orange-500 hover:from-orange-500 hover:to-orange-400 text-white'}`}
                     >
-                      {status === 'sending' ? 'Envoi...' : <><span>Envoyer le message</span><Send size={18} /></>}
+                      {status === 'sending' ? 'Envoi...' : <><span>Envoyer ma demande</span><Send size={18} /></>}
                     </button>
                   </div>
                 </form>
