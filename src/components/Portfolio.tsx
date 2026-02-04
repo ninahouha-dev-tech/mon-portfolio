@@ -1,5 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import emailjs, { EmailJSResponseStatus } from '@emailjs/browser';
+import { motion, AnimatePresence } from 'framer-motion';
 import { 
   Menu, X, Github, Download, ExternalLink, 
   Code2, Database, Server, Send, 
@@ -208,7 +209,30 @@ const Portfolio = () => {
     technology: '' 
   });
   const [status, setStatus] = useState<'idle' | 'sending' | 'success' | 'error'>('idle');
-  
+
+  const steps = useMemo(() => [
+    { id: 'personal', fields: ['name', 'location', 'email'] },
+    { id: 'type', fields: ['projectType'] },
+    { id: 'category', fields: ['category'] },
+    { id: 'technology', fields: ['technology'] }
+  ], []);
+
+  const progress = useMemo(() => {
+    const totalFields = 6;
+    const filledFields = Object.values(formState).filter(val => val !== '').length;
+    return Math.round((filledFields / totalFields) * 100);
+  }, [formState]);
+
+  const canShowStep = (stepId: string) => {
+    if (stepId === 'personal') return true;
+    if (stepId === 'type') return formState.name && formState.location && formState.email;
+    if (stepId === 'category') return formState.projectType;
+    if (stepId === 'technology') return formState.category;
+    return false;
+  };
+
+  const isFormComplete = Object.values(formState).every(val => val !== '');
+
   const handleFieldChange = (field: string, value: string) => {
     setFormState(prev => {
       const newState = { ...prev, [field]: value };
@@ -707,7 +731,24 @@ const Portfolio = () => {
               </div>
 
               <div className="p-8 md:p-12">
+                {/* Dynamically update the progress bar */}
+                <div className="mb-10">
+                  <div className="flex justify-between items-center mb-2">
+                    <span className="text-xs font-bold text-orange-500 uppercase tracking-wider">Progression de votre demande</span>
+                    <span className="text-xs font-bold text-white">{progress}%</span>
+                  </div>
+                  <div className="h-1.5 w-full bg-white/5 rounded-full overflow-hidden">
+                    <motion.div 
+                      className="h-full bg-gradient-to-r from-orange-600 to-orange-500"
+                      initial={{ width: 0 }}
+                      animate={{ width: `${progress}%` }}
+                      transition={{ duration: 0.5 }}
+                    />
+                  </div>
+                </div>
+
                 <form onSubmit={handleSubmit} className="space-y-8 max-w-2xl mx-auto">
+                  {/* STEP 1: Personal Info */}
                   <div className="grid md:grid-cols-2 gap-8">
                     <div className="group relative">
                       <input 
@@ -750,75 +791,127 @@ const Portfolio = () => {
                       <label htmlFor="email" className="absolute left-0 top-3 text-slate-500 text-sm transition-all peer-placeholder-shown:text-base peer-placeholder-shown:top-3 peer-focus:-top-5 peer-focus:text-xs peer-focus:text-orange-500 peer-valid:-top-5 peer-valid:text-xs">Email professionnel</label>
                     </div>
 
-                    <div className="group relative">
-                      <select 
-                        required
-                        className="w-full bg-transparent border-b-2 border-white/10 py-3 text-white focus:outline-none focus:border-orange-500 transition-all appearance-none cursor-pointer"
-                        id="projectType"
-                        value={formState.projectType}
-                        onChange={e => handleFieldChange('projectType', e.target.value)}
-                      >
-                        <option value="" disabled hidden className="bg-[#0f0518]">Type de projet</option>
-                        {DYNAMIC_FORM_DATA.projectTypes.map(type => (
-                          <option key={type.id} value={type.id} className="bg-[#0f0518]">{type.label}</option>
-                        ))}
-                      </select>
-                      <label htmlFor="projectType" className={`absolute left-0 -top-5 text-xs ${formState.projectType ? 'text-orange-500' : 'text-slate-500'} transition-all`}>Type de projet</label>
-                    </div>
+                    <AnimatePresence>
+                      {canShowStep('type') && (
+                        <motion.div 
+                          className="group relative"
+                          initial={{ opacity: 0, y: 20 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          exit={{ opacity: 0, y: -20 }}
+                        >
+                          <select 
+                            required
+                            className="w-full bg-transparent border-b-2 border-white/10 py-3 text-white focus:outline-none focus:border-orange-500 transition-all appearance-none cursor-pointer"
+                            id="projectType"
+                            value={formState.projectType}
+                            onChange={e => handleFieldChange('projectType', e.target.value)}
+                          >
+                            <option value="" disabled hidden className="bg-[#0f0518]">Type de projet</option>
+                            {DYNAMIC_FORM_DATA.projectTypes.map(type => (
+                              <option key={type.id} value={type.id} className="bg-[#0f0518]">{type.label}</option>
+                            ))}
+                          </select>
+                          <label htmlFor="projectType" className={`absolute left-0 -top-5 text-xs ${formState.projectType ? 'text-orange-500' : 'text-slate-500'} transition-all`}>Type de projet</label>
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
                   </div>
 
                   <div className="grid md:grid-cols-2 gap-8">
-                    <div className={`group relative transition-all duration-500 ${!formState.projectType ? 'opacity-30 pointer-events-none' : 'opacity-100'}`}>
-                      <select 
-                        required
-                        disabled={!formState.projectType}
-                        className="w-full bg-transparent border-b-2 border-white/10 py-3 text-white focus:outline-none focus:border-orange-500 transition-all appearance-none cursor-pointer"
-                        id="category"
-                        value={formState.category}
-                        onChange={e => handleFieldChange('category', e.target.value)}
-                      >
-                        <option value="" disabled hidden className="bg-[#0f0518]">Catégorie</option>
-                        {DYNAMIC_FORM_DATA.projectTypes.find(t => t.id === formState.projectType)?.categories.map(cat => (
-                          <option key={cat.id} value={cat.id} className="bg-[#0f0518]">{cat.label}</option>
-                        ))}
-                      </select>
-                      <label htmlFor="category" className={`absolute left-0 -top-5 text-xs ${formState.category ? 'text-orange-500' : 'text-slate-500'} transition-all`}>Catégorie</label>
-                    </div>
+                    <AnimatePresence>
+                      {canShowStep('category') && (
+                        <motion.div 
+                          className="group relative"
+                          initial={{ opacity: 0, y: 20 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          exit={{ opacity: 0, y: -20 }}
+                        >
+                          <select 
+                            required
+                            className="w-full bg-transparent border-b-2 border-white/10 py-3 text-white focus:outline-none focus:border-orange-500 transition-all appearance-none cursor-pointer"
+                            id="category"
+                            value={formState.category}
+                            onChange={e => handleFieldChange('category', e.target.value)}
+                          >
+                            <option value="" disabled hidden className="bg-[#0f0518]">Catégorie</option>
+                            {DYNAMIC_FORM_DATA.projectTypes.find(t => t.id === formState.projectType)?.categories.map(cat => (
+                              <option key={cat.id} value={cat.id} className="bg-[#0f0518]">{cat.label}</option>
+                            ))}
+                          </select>
+                          <label htmlFor="category" className={`absolute left-0 -top-5 text-xs ${formState.category ? 'text-orange-500' : 'text-slate-500'} transition-all`}>Catégorie</label>
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
 
-                    <div className={`group relative transition-all duration-500 ${!formState.category ? 'opacity-30 pointer-events-none' : 'opacity-100'}`}>
-                      <select 
-                        required
-                        disabled={!formState.category}
-                        className="w-full bg-transparent border-b-2 border-white/10 py-3 text-white focus:outline-none focus:border-orange-500 transition-all appearance-none cursor-pointer"
-                        id="technology"
-                        value={formState.technology}
-                        onChange={e => handleFieldChange('technology', e.target.value)}
-                      >
-                        <option value="" disabled hidden className="bg-[#0f0518]">Technologie</option>
-                        {DYNAMIC_FORM_DATA.projectTypes.find(t => t.id === formState.projectType)?.categories.find(c => c.id === formState.category)?.techs.map(tech => (
-                          <option key={tech} value={tech} className="bg-[#0f0518]">{tech}</option>
-                        ))}
-                      </select>
-                      <label htmlFor="technology" className={`absolute left-0 -top-5 text-xs ${formState.technology ? 'text-orange-500' : 'text-slate-500'} transition-all`}>Technologie</label>
-                    </div>
+                    <AnimatePresence>
+                      {canShowStep('technology') && (
+                        <motion.div 
+                          className="group relative"
+                          initial={{ opacity: 0, y: 20 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          exit={{ opacity: 0, y: -20 }}
+                        >
+                          <select 
+                            required
+                            className="w-full bg-transparent border-b-2 border-white/10 py-3 text-white focus:outline-none focus:border-orange-500 transition-all appearance-none cursor-pointer"
+                            id="technology"
+                            value={formState.technology}
+                            onChange={e => handleFieldChange('technology', e.target.value)}
+                          >
+                            <option value="" disabled hidden className="bg-[#0f0518]">Technologie</option>
+                            {DYNAMIC_FORM_DATA.projectTypes.find(t => t.id === formState.projectType)?.categories.find(c => c.id === formState.category)?.techs.map(tech => (
+                              <option key={tech} value={tech} className="bg-[#0f0518]">{tech}</option>
+                            ))}
+                          </select>
+                          <label htmlFor="technology" className={`absolute left-0 -top-5 text-xs ${formState.technology ? 'text-orange-500' : 'text-slate-500'} transition-all`}>Technologie</label>
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
                   </div>
 
-                  <div className="pt-4 space-y-4">
-                    {status === 'success' && (
-                      <div className="p-4 bg-green-500/10 border border-green-500/20 rounded-xl flex items-center gap-3 text-green-400 animate-in fade-in slide-in-from-bottom-4 duration-500">
-                        <CheckCircle size={20} />
-                        <span>Demande envoyée avec succès ! Je reviens vers vous rapidement.</span>
-                      </div>
+                  {/* CONCLUSION & SUBMIT */}
+                  <AnimatePresence>
+                    {isFormComplete && (
+                      <motion.div 
+                        className="pt-4 space-y-6"
+                        initial={{ opacity: 0, scale: 0.95 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                      >
+                        <div className="bg-white/5 rounded-2xl p-6 border border-white/10">
+                          <h4 className="text-sm font-bold text-orange-500 uppercase tracking-widest mb-4">Récapitulatif de votre demande</h4>
+                          <div className="grid grid-cols-2 gap-4 text-sm">
+                            <div>
+                              <p className="text-slate-500 mb-1">Cible</p>
+                              <p className="text-white font-medium">{formState.name} ({formState.location})</p>
+                            </div>
+                            <div>
+                              <p className="text-slate-500 mb-1">Projet</p>
+                              <p className="text-white font-medium">{DYNAMIC_FORM_DATA.projectTypes.find(t => t.id === formState.projectType)?.label}</p>
+                            </div>
+                            <div>
+                              <p className="text-slate-500 mb-1">Spécification</p>
+                              <p className="text-white font-medium">{formState.technology} ({formState.category})</p>
+                            </div>
+                          </div>
+                        </div>
+
+                        {status === 'success' && (
+                          <div className="p-4 bg-green-500/10 border border-green-500/20 rounded-xl flex items-center gap-3 text-green-400">
+                            <CheckCircle size={20} />
+                            <span>Demande envoyée avec succès ! Je reviens vers vous rapidement.</span>
+                          </div>
+                        )}
+                        
+                        <button 
+                          type="submit" 
+                          disabled={status === 'sending' || status === 'success'}
+                          className={`w-full font-bold py-4 rounded-xl shadow-lg flex items-center justify-center gap-3 transition-all group ${status === 'sending' ? 'bg-slate-700 cursor-not-allowed' : 'bg-gradient-to-r from-orange-600 to-orange-500 hover:from-orange-500 hover:to-orange-400 text-white'}`}
+                        >
+                          {status === 'sending' ? 'Envoi...' : <><span>Confirmer et envoyer ma demande</span><Send size={18} /></>}
+                        </button>
+                      </motion.div>
                     )}
-                    
-                    <button 
-                      type="submit" 
-                      disabled={status === 'sending' || status === 'success'}
-                      className={`w-full font-bold py-4 rounded-xl shadow-lg flex items-center justify-center gap-3 transition-all group ${status === 'sending' ? 'bg-slate-700 cursor-not-allowed' : 'bg-gradient-to-r from-orange-600 to-orange-500 hover:from-orange-500 hover:to-orange-400 text-white'}`}
-                    >
-                      {status === 'sending' ? 'Envoi...' : <><span>Envoyer ma demande</span><Send size={18} /></>}
-                    </button>
-                  </div>
+                  </AnimatePresence>
                 </form>
               </div>
             </div>
