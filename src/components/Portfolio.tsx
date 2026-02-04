@@ -126,28 +126,75 @@ const DYNAMIC_FORM_DATA = {
   projectTypes: [
     {
       id: "web",
-      label: "Site Web",
+      label: "Développement Web",
       categories: [
         {
           id: "vitrine",
           label: "Site Vitrine",
-          techs: ["React", "HTML/CSS", "Next.js"]
+          techs: ["React.js", "Next.js", "HTML5 / Tailwind CSS", "Astro"]
         },
         {
           id: "ecommerce",
-          label: "E-commerce",
-          techs: ["Shopify", "React", "Node.js"]
+          label: "E-commerce & Boutique",
+          techs: ["Shopify", "WooCommerce", "Prestashop", "Custom React / Stripe"]
+        },
+        {
+          id: "saas",
+          label: "SaaS & Dashboard",
+          techs: ["React / Node.js", "Next.js / Supabase", "PHP / Laravel", "Python / Django"]
+        },
+        {
+          id: "blog",
+          label: "Blog / Portfolio",
+          techs: ["WordPress", "Gatsby", "Next.js (CMS Headless)"]
         }
       ]
     },
     {
       id: "mobile",
-      label: "Application Mobile",
+      label: "Applications Mobiles",
       categories: [
         {
           id: "ios_android",
-          label: "iOS & Android",
-          techs: ["React Native", "Flutter"]
+          label: "iOS & Android (Hybride)",
+          techs: ["React Native", "Flutter", "Ionic"]
+        },
+        {
+          id: "pwa",
+          label: "PWA (Progressive Web App)",
+          techs: ["React / Vite", "Next.js"]
+        }
+      ]
+    },
+    {
+      id: "design",
+      label: "Design & Identité Visuelle",
+      categories: [
+        {
+          id: "uiux",
+          label: "UX / UI Design",
+          techs: ["Figma", "Adobe XD", "Sketch"]
+        },
+        {
+          id: "branding",
+          label: "Branding & Logo",
+          techs: ["Adobe Illustrator", "Canva Pro"]
+        }
+      ]
+    },
+    {
+      id: "maintenance",
+      label: "Maintenance & Support",
+      categories: [
+        {
+          id: "bugfix",
+          label: "Correction de Bugs",
+          techs: ["Audit de Code", "Débogage API", "Optimisation Performance"]
+        },
+        {
+          id: "migration",
+          label: "Migration / Mise à jour",
+          techs: ["Mise à jour Version", "Migration Cloud", "Refactorisation"]
         }
       ]
     }
